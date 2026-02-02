@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { MarkdownText } from '@/components/ui/MarkdownText';
 import type { Question, EvaluationResult } from '@/types';
 import { cn } from '@/lib/utils';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
@@ -81,7 +82,7 @@ export function TextInputQuestion({
       <div className="p-6">
         {/* Scenario */}
         <div className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 mb-6">
-          <p className="text-neutral-200 whitespace-pre-wrap">{question.scenarioText}</p>
+          <MarkdownText className="text-neutral-200">{question.scenarioText}</MarkdownText>
         </div>
 
         {/* Text Input */}

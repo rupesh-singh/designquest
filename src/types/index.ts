@@ -60,13 +60,15 @@ export interface ConceptKeyword {
 export interface Question {
   id: string;
   lessonId: string;
-  type: 'multiple_choice' | 'trade_off' | 'multi_select' | 'text_input';
+  type: 'multiple_choice' | 'trade_off' | 'multi_select' | 'text_input' | 'self_judge';
   scenarioText: string;
   options: QuestionOption[];
   correctAnswer: string | string[];
   explanation: string;
   hints: string[];
   concepts?: ConceptKeyword[];
+  sampleSolution?: string; // For self_judge questions - the expected/ideal solution
+  evaluationCriteria?: string[]; // Criteria for self-evaluation
   xpValue: number;
   orderIndex: number;
 }

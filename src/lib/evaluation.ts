@@ -192,6 +192,24 @@ export function evaluateTextInput(
   };
 }
 
+// Self-judge evaluation (user decides if they passed or failed)
+export function evaluateSelfJudge(
+  passed: boolean,
+  baseXP: number
+): EvaluationResult {
+  const score = passed ? 100 : 40; // Give partial XP even for failed attempts to encourage honesty
+  
+  return {
+    score,
+    maxScore: 100,
+    isCorrect: passed,
+    feedback: passed 
+      ? '🌟 Great! You understood the concept well.'
+      : '📚 Honest self-assessment helps you learn! This topic has been added to your review list.',
+    xpEarned: Math.floor(baseXP * (score / 100)),
+  };
+}
+
 // Main evaluation function
 export function evaluateAnswer(
   questionType: string,
@@ -201,6 +219,7 @@ export function evaluateAnswer(
     correctAnswer?: string;
     concepts?: ConceptKeywords[];
     xpValue: number;
+    selfJudgeResult?: { passed: boolean };
   }
 ): EvaluationResult {
   const { options = [], correctAnswer = '', concepts = [], xpValue } = questionData;
@@ -232,6 +251,12 @@ export function evaluateAnswer(
       return evaluateTextInput(
         userAnswer as string,
         concepts,
+        xpValue
+      );
+
+    case 'self_judge':
+      return evaluateSelfJudge(
+        questionData.selfJudgeResult?.passed ?? false,
         xpValue
       );
 

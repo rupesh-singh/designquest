@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { lessonId, questionId, answer } = await request.json();
+    const { lessonId, questionId, answer, selfJudgeResult } = await request.json();
 
     // Get question
     const question = await prisma.question.findUnique({
@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
       options,
       correctAnswer,
       xpValue: question.xpValue,
+      selfJudgeResult,
     });
 
     // Update or create progress

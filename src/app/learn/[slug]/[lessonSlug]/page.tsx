@@ -7,6 +7,7 @@ import { ArrowLeft, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 import { QuestionCard } from '@/components/lessons/QuestionCard';
 import { TextInputQuestion } from '@/components/lessons/TextInputQuestion';
+import { SelfJudgeQuestion } from '@/components/lessons/SelfJudgeQuestion';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
@@ -59,7 +60,7 @@ export default function LessonPage() {
     }
   }, [isAuthenticated, params.slug, params.lessonSlug, router]);
 
-  const handleSubmitAnswer = async (answer: string | string[]): Promise<EvaluationResult & { explanation: string }> => {
+  const handleSubmitAnswer = async (answer: string | string[], selfJudgeResult?: { passed: boolean }): Promise<EvaluationResult & { explanation: string }> => {
     const currentQuestion = questions[currentQuestionIndex];
     
     const res = await fetch('/api/progress/submit', {
@@ -69,6 +70,7 @@ export default function LessonPage() {
         lessonId: lesson?.id,
         questionId: currentQuestion.id,
         answer,
+        selfJudgeResult,
       }),
     });
 
@@ -246,6 +248,15 @@ export default function LessonPage() {
       {currentQuestion && (
         currentQuestion.type === 'text_input' ? (
           <TextInputQuestion
+            question={currentQuestion}
+            questionNumber={currentQuestionIndex + 1}
+            totalQuestions={questions.length}
+            onSubmit={handleSubmitAnswer}
+            onNext={handleNext}
+            isLast={currentQuestionIndex === questions.length - 1}
+          />
+        ) : currentQuestion.type === 'self_judge' ? (
+          <SelfJudgeQuestion
             question={currentQuestion}
             questionNumber={currentQuestionIndex + 1}
             totalQuestions={questions.length}
