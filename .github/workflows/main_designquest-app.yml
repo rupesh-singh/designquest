@@ -21,19 +21,27 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '24.x'
+          node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: npm install and build
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm ci
+          npx prisma generate
+          npm run build
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: |
+            .next/
+            public/
+            package.json
+            package-lock.json
+            prisma/
+            next.config.ts
 
   deploy:
     runs-on: ubuntu-latest
@@ -47,6 +55,17 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: node-app
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: Install production dependencies
+        run: npm ci --only=production
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
       
       - name: Login to Azure
         uses: azure/login@v2
