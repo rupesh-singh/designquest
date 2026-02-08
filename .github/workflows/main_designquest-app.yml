@@ -63,6 +63,13 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_DC540949E54D468A83FA432CC25B00C0 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D60B3AB7706C4FAD8D8205F957C6C920 }}
 
+      - name: Configure Azure App Settings
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az webapp config appsettings set --name designquest-app --resource-group designquest-app_group --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false
+            az webapp config set --name designquest-app --resource-group designquest-app_group --startup-file "node server.js"
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
@@ -70,4 +77,13 @@ jobs:
           app-name: 'designquest-app'
           slot-name: 'Production'
           package: .
+
+      - name: Clean stale files and restart
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            # Delete old node_modules.tar.gz that Oryx left behind
+            az webapp ssh --name designquest-app --resource-group designquest-app_group --command "rm -f /home/site/wwwroot/node_modules.tar.gz" 2>/dev/null || true
+            # Restart to pick up new startup command
+            az webapp restart --name designquest-app --resource-group designquest-app_group
           
