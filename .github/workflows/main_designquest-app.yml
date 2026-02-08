@@ -33,7 +33,8 @@ jobs:
           
       - name: Copy static files for standalone
         run: |
-          cp -r public .next/standalone/
+          mkdir -p .next/standalone/public
+          cp -r public/* .next/standalone/public/ 2>/dev/null || true
           cp -r .next/static .next/standalone/.next/
 
       - name: Upload artifact for deployment job
