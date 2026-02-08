@@ -67,8 +67,20 @@ jobs:
         uses: azure/cli@v2
         with:
           inlineScript: |
-            az webapp config appsettings set --name designquest-app --resource-group designquest-app_group --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false
+            az webapp config appsettings set --name designquest-app --resource-group designquest-app_group --settings SCM_DO_BUILD_DURING_DEPLOYMENT=false WEBSITE_RUN_FROM_PACKAGE=0
             az webapp config set --name designquest-app --resource-group designquest-app_group --startup-file "node server.js"
+            az webapp stop --name designquest-app --resource-group designquest-app_group
+
+      - name: Clean wwwroot before deploy
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            # Get Kudu credentials and clean wwwroot
+            CREDS=$(az webapp deployment list-publishing-profiles --name designquest-app --resource-group designquest-app_group --query "[?publishMethod=='MSDeploy'].{user:userName,pass:userPWD}" -o tsv)
+            USER=$(echo "$CREDS" | cut -f1)
+            PASS=$(echo "$CREDS" | cut -f2)
+            # Delete all files in wwwroot via Kudu VFS API
+            curl -X DELETE "https://designquest-app.scm.azurewebsites.net/api/vfs/site/wwwroot/?recursive=true" -u "$USER:$PASS" || true
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -78,12 +90,9 @@ jobs:
           slot-name: 'Production'
           package: .
 
-      - name: Clean stale files and restart
+      - name: Start app
         uses: azure/cli@v2
         with:
           inlineScript: |
-            # Delete old node_modules.tar.gz that Oryx left behind
-            az webapp ssh --name designquest-app --resource-group designquest-app_group --command "rm -f /home/site/wwwroot/node_modules.tar.gz" 2>/dev/null || true
-            # Restart to pick up new startup command
-            az webapp restart --name designquest-app --resource-group designquest-app_group
+            az webapp start --name designquest-app --resource-group designquest-app_group
           
