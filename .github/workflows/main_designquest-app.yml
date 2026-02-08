@@ -38,10 +38,12 @@ jobs:
           path: |
             .next/
             public/
+            src/
             package.json
             package-lock.json
             prisma/
             next.config.ts
+            tsconfig.json
 
   deploy:
     runs-on: ubuntu-latest
