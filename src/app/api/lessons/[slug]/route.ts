@@ -33,7 +33,7 @@ export async function GET(
     }
 
     // Parse JSON fields for questions
-    const questions = lesson.questions.map((q: { options: string; correctAnswer: string; hints: string; }) => ({
+    const questions = lesson.questions.map((q: { options: string; correctAnswer: string; hints: string | null; }) => ({
       ...q,
       options: JSON.parse(q.options),
       correctAnswer: JSON.parse(q.correctAnswer),

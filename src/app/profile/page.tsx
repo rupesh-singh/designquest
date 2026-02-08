@@ -202,7 +202,7 @@ export default function ProfilePage() {
                   <ProgressBar 
                     value={(module.completed / module.total) * 100} 
                     max={100} 
-                    color={module.completed === module.total ? 'emerald' : 'amber'} 
+                    color={module.completed === module.total ? 'green' : 'amber'} 
                   />
                 </div>
               ))}

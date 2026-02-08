@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Prisma schema for Azure PostgreSQL deployment
+// Copy this file to schema.prisma when deploying to Azure
 
 generator client {
   provider = "prisma-client-js"
