@@ -107,12 +107,13 @@ DesignQuest/
 ├── prisma/
 │   ├── schema.prisma             # Database schema
 │   ├── seed.ts                   # Sample content seeder
-│   └── dev.db                    # SQLite database (gitignored)
+│
+├── dev.db                        # SQLite database (gitignored)
 │
 ├── .env                          # Environment variables
 ├── package.json
 ├── tsconfig.json
-├── next.config.ts
+├── next.config.mjs
 └── postcss.config.mjs
 ```
 
