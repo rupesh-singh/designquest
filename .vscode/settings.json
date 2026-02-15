@@ -1,0 +1,11 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/36e77c32-432b-4c18-8e96-b232bf624940/resourceGroups/designquest-rg/providers/Microsoft.Web/sites/designquest-app",
+    "appService.deploySubpath": ".",
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".next{,/**}",
+        ".git{,/**}",
+        "*.db",
+        ".env"
+    ]
+}
