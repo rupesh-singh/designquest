@@ -41,6 +41,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     permissions:
+      id-token: write
       contents: read
 
     steps:
@@ -49,12 +50,18 @@ jobs:
         with:
           name: node-app
 
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D89F41677CB04E1EB174FA4EC87D4612 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_9CA3A2ECC273447FBC39705015E0D98D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_7EA297FBACF44620A110E86EF3D6B3C7 }}
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'designquest-app'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           package: .
           
